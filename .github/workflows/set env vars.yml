@@ -1,18 +1,21 @@
-name: 'custom GITHUB_ENV var demo'
+name: 'Custom GITHUB_ENV Var Demo'
 
 on: workflow_dispatch
 
 jobs:
-    custom_GITHUB_ENV:
-        runs-on: ubuntu-latest
-        steps:
-        - name: Set the value
-          id: step_one
-        run: |
-          echo "action_state=yellow" >> $GITHUB_ENV
-        
-        - name: Use the value
-          id: step_two
-        run: |
-           echo "${{ env.action_state }}" # This will output 'yellow'
+  custom_GITHUB_ENV:
+    runs-on: ubuntu-latest
 
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set the value
+        id: step_one
+        run: echo "action_state=yellow" >> $GITHUB_ENV
+
+      - name: Use the value
+        id: step_two
+        env:
+          ACTION_STATE: ${{ env.action_state }}
+        run: echo "${{ env.ACTION_STATE }}" # This will output 'yellow'
