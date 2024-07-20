@@ -1,0 +1,42 @@
+name: Continous Integration Demo
+
+on:
+    push:
+        branches: ["main"]
+    workflow-dispatch:
+
+env:
+    DOTNET_VERSION: '8.0.303'
+    #set this to the .NET core version to use
+
+defaults:
+    run:
+        shell: bash
+        working-directory: ./WebApplication01
+
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        steps:
+         - uses: actions/checkout@v3
+
+         - name: set up .NET core
+           uses: actions/setup-dotnet@v2
+           with:
+            dotnet-version: ${{ env.DOTNET_VERSION }}
+
+         - name: install dependencies
+           run: dotnet restore
+           
+         - name: Build with dotnet
+           run: dotnet build --configuration Release
+
+         - name: dotnet publish
+           run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp   
+ 
+         - name: upload artifact for deployment job
+           uses: actions/upload-artifact@v3
+           with:
+            name: .net-app
+            path: ${{env.DOTNET_ROOT}}/myapp
